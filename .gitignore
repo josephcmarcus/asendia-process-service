@@ -103,6 +103,4 @@ __azurite_db*__.json
 
 # test files
 test.*
-
-# Misc
-.DS_Store
+processRecordsTest
