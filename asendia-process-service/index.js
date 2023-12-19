@@ -4,6 +4,7 @@ module.exports = df.orchestrator(function* (context) {
     const activityPayload = {
         instanceId: context.df.instanceId,
         records: [],
+        formattedRecords: [],
         errors: [],
     }
 
@@ -11,10 +12,10 @@ module.exports = df.orchestrator(function* (context) {
 
     const records = yield context.df.callActivity('getRecords', activityPayload);
     if (records === null) {
-        const message = `Could not get records for ID = '${activityPayload.instanceId}'. An error occurred in the getRecords function.`;
+        const message = `No records for ID = '${activityPayload.instanceId}'. An error occurred in the getRecords function.`;
         context.log(message);
         return message;
-      } else if (records.length === 0) {
+      } else if (records.addresses.length === 0) {
           const message = `No records to process for ID = '${activityPayload.instanceId}'. Exiting function.`;
           context.log(message);
           return message;
@@ -24,7 +25,11 @@ module.exports = df.orchestrator(function* (context) {
 
     const formattedRecords = yield context.df.callActivity('formatRecords', activityPayload);
 
-    outputs.push(records, formattedRecords);
+    activityPayload.formattedRecords = formattedRecords;
+
+    const results = yield context.df.callActivity('processRecords', activityPayload);
+
+    outputs.push(formattedRecords);
 
     return outputs;
 });

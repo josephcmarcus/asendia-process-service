@@ -21,6 +21,6 @@ module.exports = async function (context) {
     return data;
   } catch (err) {
     context.log(`getRecords failed for ID = '${instanceId}'. ${err}`);
-    return null;
+    return;
   }
 };

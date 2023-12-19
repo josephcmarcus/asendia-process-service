@@ -24,3 +24,25 @@ module.exports.getRecords = async function (table) {
   );
   return rows;
 };
+
+module.exports.updateRecord = async function (
+  table,
+  column,
+  packageId,
+  values
+) {
+  // updates a column for an existing record in the database
+  const sql = `UPDATE ${table} SET ${column} = ? WHERE ${packageId} = ?`;
+  const response = await promisePool.execute(
+    sql,
+    values,
+    function (err, results, fields) {
+      if (err) {
+        context.log('There was an error updating the database record:', err);
+        return err;
+      }
+      return results;
+    }
+  );
+  return response;
+};
