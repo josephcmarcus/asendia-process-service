@@ -20,9 +20,11 @@ module.exports = df.orchestrator(function* (context) {
           return message;
       };
 
-    activityPayload.data = records;
+    activityPayload.records = records;
 
-    outputs.push(records);
+    const formattedRecords = yield context.df.callActivity('formatRecords', activityPayload);
+
+    outputs.push(records, formattedRecords);
 
     return outputs;
 });
