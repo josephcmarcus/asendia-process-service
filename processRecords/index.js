@@ -18,17 +18,23 @@ module.exports = async function (context) {
 
   for (record of formattedRecords.addresses) {
     try {
-      console.log('test')
-
+      console.log(record.PackageID)
       try {
-        // update the processed column in the mysql db with a timestamp
         const date = getDateTime();
 
+        // update the processed column on the address and item tables with timestamp
         await database.updateRecord(
           addressTable,
           'processedDate',
-          'packageID',
-          [date, record.packageID]
+          'PackageID',
+          [date, record.PackageID]
+        );
+
+        await database.updateRecord(
+          itemTable,
+          'processedDate',
+          'PackageID',
+          [date, record.PackageID]
         );
         context.log(
           `processRecords succeeded to update database for ${record.packageID} of instance = '${instanceId}'.`
@@ -45,7 +51,6 @@ module.exports = async function (context) {
       const date = getDateTime();
       const error = {};
     }
-    console.log(record.packageID);
   };
 
   context.log(
