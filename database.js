@@ -17,10 +17,10 @@ const pool = mysql.createPool({
 
 const promisePool = pool.promise();
 
-module.exports.getData = async function (table) {
+module.exports.getRecords = async function (table) {
   // returns an array of records matching the sql query, or an empty array if no records are found
   const [rows] = await promisePool.query(
-    `SELECT * FROM ${table}`
+    `SELECT * FROM ${table} where processedDate is null`
   );
   return rows;
 };
