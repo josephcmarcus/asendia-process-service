@@ -10,17 +10,18 @@ module.exports = df.orchestrator(function* (context) {
     }
 
     const outputs = [];
+    let errors;
 
     const records = yield context.df.callActivity('getRecords', activityPayload);
     if (records === null) {
         const message = `No records for ID = '${activityPayload.instanceId}'. An error occurred in the getRecords function.`;
         context.log(message);
         return message;
-      } else if (records.addresses.length === 0) {
-          const message = `No records to process for ID = '${activityPayload.instanceId}'. Exiting function.`;
-          context.log(message);
-          return message;
-      };
+    } else if (records.addresses.length === 0) {
+        const message = `No records to process for ID = '${activityPayload.instanceId}'. Exiting function.`;
+        context.log(message);
+        return message;
+    };
 
     activityPayload.records = records;
 
@@ -30,11 +31,15 @@ module.exports = df.orchestrator(function* (context) {
 
     const results = yield context.df.callActivity('processRecords', activityPayload);
 
-    activityPayload.errors = results.errors;
     activityPayload.responses = results.responses;
 
     const responses = yield context.df.callActivity('writeResponses', activityPayload);
 
+    if (results.errors.length !== 0) {
+        activityPayload.errors = results.errors;
+        errors = yield context.df.callActivity('writeErrors', activityPayload);
+    }
+    
     outputs.push(formattedRecords, results, responses);
 
     return outputs;

@@ -119,7 +119,6 @@ module.exports = async function (context) {
       results.recordsProcessed++;
 
     } catch (err) {
-      console.log(err)
       const date = getDateTime();
       const error = {
         InstanceId: instanceId,
