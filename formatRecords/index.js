@@ -7,10 +7,12 @@ module.exports = async function (context) {
 
     for (item of items) {
       itemPrices.push(parseFloat(item.unitPrice));
+      delete item.shippingCost;
     }
 
     record.totalPackageValue = itemPrices.reduce((pre, curr) => pre + curr, 0)
     record.items = items;
+    record.shippingCost = 0;
   }
 
   return records;
