@@ -8,6 +8,7 @@ module.exports = async function (context) {
     for (item of items) {
       itemPrices.push(parseFloat(item.unitPrice));
       delete item.shippingCost;
+      delete item.processedDate;
     }
 
     record.totalPackageValue = itemPrices.reduce((pre, curr) => pre + curr, 0)

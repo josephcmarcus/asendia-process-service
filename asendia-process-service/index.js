@@ -27,9 +27,9 @@ module.exports = df.orchestrator(function* (context) {
 
     activityPayload.formattedRecords = formattedRecords;
 
-    // const results = yield context.df.callActivity('processRecords', activityPayload);
+    const results = yield context.df.callActivity('processRecords', activityPayload);
 
-    outputs.push(formattedRecords);
+    outputs.push(formattedRecords, results);
 
     return outputs;
 });

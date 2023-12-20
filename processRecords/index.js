@@ -14,15 +14,85 @@ module.exports = async function (context) {
     recordsReceived: formattedRecords.addresses.length,
     recordsProcessed: 0,
     errors: [],
+    responses: []
   };
 
   for (record of formattedRecords.addresses) {
+
+    console.log(record);
+
+    // Attempt to send each record to the Asendia API for processing
     try {
-      console.log(record.PackageID)
+      const response = await axios({
+        method: 'post',
+        url: `${process.env.ASENDIA_API_URL}`,
+        headers: {
+          Accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-AsendiaOne-ApiKey': `${process.env.ASENDIA_API_KEY}`,
+          'X-AsendiaOne-DataSource': `${process.env.ASENDIA_DATA_SOURCE}`
+        },
+        data: {
+          accountNumber: `${process.env.ASENDIA_ACCOUNT_NUMBER}`,
+          processingLocation: `${process.env.ASENDIA_PROCESSING_LOCATION}`,
+          labelType: record.labelType,
+          orderNumber: record.orderNumber,
+          dispatchNumber: record.dispatchNumber,
+          packageID: record.PackageID,
+          returnFirstName: record.returnFirstName,
+          returnLastName: record.returnLastName,
+          returnAddressLine1: record.returnAddressLine1,
+          returnAddressLine2: record.returnAddressLine2,
+          returnAddressLine3: record.returnAddressLine3,
+          returnCity: record.returnCity,
+          returnProvince: record.returnProvince,
+          returnPostalCode: record.returnPostalCode,
+          returnCountryCode: record.returnCountryCode,
+          returnPhone: record.returnPhone,
+          returnEmail: record.returnEmail,
+          recipientFirstName: record.recipientFirstName,
+          recipientLastName: record.recipientLastName,
+          recipientBusinessName: record.recipientBusinessName,
+          recipientAddressLine1: record.recipientAddressLine1,
+          recipientAddressLine2: record.recipientAddressLine2,
+          recipientAddressLine3: record.recipientAddressLine3,
+          recipientCity: record.recipientCity,
+          recipientProvince: record.recipientProvince,
+          recipientPostalCode: record.recipientPostalCode,
+          recipientCountryCode: record.recipientCountryCode,
+          recipientPhone: record.recipientPhone,
+          recipientEmail: record.recipientEmail,
+          totalPackageWeight: record.totalPackageWeight,
+          weightUnit: record.weightUnit,
+          totalPackageValue: record.totalPackageValue,
+          currencyType: record.currencyType,
+          productCode: record.productCode,
+          contentType: record.contentType,
+          packageContentDescription: record.packageContentDescription,
+          items: record.items,
+          shippingCost: record.shippingCost
+        },
+        auth: {
+          username: `${process.env.ASENDIA_USERNAME}`,
+          password: `${process.env.ASENDIA_PASSWORD}`,
+        },
+        params: {}
+      });
+
+      const date = getDateTime();
+
+      const recordResponse = {
+        instanceId: instanceId,
+        response: response.data,
+        date: date,
+      }
+
+      results.responses.push(recordResponse);
+
+      // Attempt to update the processed column on the address and item tables with timestamp
       try {
         const date = getDateTime();
 
-        // update the processed column on the address and item tables with timestamp
         await database.updateRecord(
           addressTable,
           'processedDate',
@@ -48,8 +118,15 @@ module.exports = async function (context) {
       results.recordsProcessed++;
 
     } catch (err) {
+      console.log(err)
       const date = getDateTime();
-      const error = {};
+      const error = {
+        instanceId: instanceId,
+        error: err.message,
+        trace: err.stack,
+        date: date,
+      }
+      results.errors.push(error);
     }
   };
 
