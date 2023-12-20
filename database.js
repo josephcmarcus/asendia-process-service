@@ -46,3 +46,20 @@ module.exports.updateRecord = async function (
   );
   return response;
 };
+
+module.exports.writeResponses = async function (table, columns, values) {
+  // writes an array of errors to the database
+  const sql = `INSERT INTO ${table} (${columns}) VALUES ?`;
+  const response = await promisePool.query(
+    sql,
+    [values],
+    function (err, results, fields) {
+      if (err) {
+        context.log('There was an error logging errors to the database:', err);
+        return err;
+      }
+      return results;
+    }
+  );
+  return response;
+};

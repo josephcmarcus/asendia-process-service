@@ -82,9 +82,10 @@ module.exports = async function (context) {
       const date = getDateTime();
 
       const recordResponse = {
-        instanceId: instanceId,
-        response: response.data,
-        date: date,
+        InstanceID: instanceId,
+        PackageID: record.PackageID,
+        Response: JSON.stringify(response.data),
+        Date: date,
       }
 
       results.responses.push(recordResponse);
@@ -107,11 +108,11 @@ module.exports = async function (context) {
           [date, record.PackageID]
         );
         context.log(
-          `processRecords succeeded to update database for ${record.packageID} of instance = '${instanceId}'.`
+          `processRecords succeeded to update database for ${record.PackageID} of instance = '${instanceId}'.`
         );
       } catch (err) {
         context.log(
-          `processRecords failed to update database for ${record.packageID} of instance = '${instanceId}'. ${err}`
+          `processRecords failed to update database for ${record.PackageID} of instance = '${instanceId}'. ${err}`
         );
       }
 
@@ -121,10 +122,11 @@ module.exports = async function (context) {
       console.log(err)
       const date = getDateTime();
       const error = {
-        instanceId: instanceId,
-        error: err.message,
-        trace: err.stack,
-        date: date,
+        InstanceId: instanceId,
+        PackageID: record.PackageID,
+        Error: err.message,
+        Trace: err.stack,
+        Date: date,
       }
       results.errors.push(error);
     }

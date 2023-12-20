@@ -6,6 +6,7 @@ module.exports = df.orchestrator(function* (context) {
         records: [],
         formattedRecords: [],
         errors: [],
+        responses: []
     }
 
     const outputs = [];
@@ -29,7 +30,12 @@ module.exports = df.orchestrator(function* (context) {
 
     const results = yield context.df.callActivity('processRecords', activityPayload);
 
-    outputs.push(formattedRecords, results);
+    activityPayload.errors = results.errors;
+    activityPayload.responses = results.responses;
+
+    const responses = yield context.df.callActivity('writeResponses', activityPayload);
+
+    outputs.push(formattedRecords, results, responses);
 
     return outputs;
 });
