@@ -25,6 +25,14 @@ module.exports.getRecords = async function (table) {
   return rows;
 };
 
+// module.exports.getRecords = async function (table) {
+//   // returns a single record matching the sql query for testing purposes
+//   const [rows] = await promisePool.query(
+//     `SELECT * FROM ${table} where PackageID = '11195102'`
+//   );
+//   return rows;
+// };
+
 module.exports.updateRecord = async function (
   table,
   column,

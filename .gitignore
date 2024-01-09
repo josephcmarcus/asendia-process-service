@@ -102,5 +102,6 @@ __azurite_db*__.json
 *.pem
 
 # test files
+test
 test.*
 processRecordsTest

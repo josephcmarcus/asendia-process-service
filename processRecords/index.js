@@ -14,11 +14,58 @@ module.exports = async function (context) {
     recordsReceived: formattedRecords.addresses.length,
     recordsProcessed: 0,
     errors: [],
-    responses: []
+    responses: [],
+    dataSent: []
   };
 
   for (record of formattedRecords.addresses) {
 
+    let dataObject = {
+      data: {
+        accountNumber: record.accountNumber,
+        processingLocation: record.processingLocation,
+        labelType: record.labelType,
+        orderNumber: record.orderNumber,
+        dispatchNumber: record.dispatchNumber,
+        packageID: record.packageID,
+        returnFirstName: record.returnFirstName,
+        returnLastName: record.returnLastName,
+        returnAddressLine1: record.returnAddressLine1,
+        returnAddressLine2: record.returnAddressLine2,
+        returnAddressLine3: record.returnAddressLine3,
+        returnCity: record.returnCity,
+        returnProvince: record.returnProvince,
+        returnPostalCode: record.returnPostalCode,
+        returnCountryCode: record.returnCountryCode,
+        returnPhone: record.returnPhone,
+        returnEmail: record.returnEmail,
+        recipientFirstName: record.recipientFirstName,
+        recipientLastName: record.recipientLastName,
+        recipientBusinessName: record.recipientBusinessName,
+        recipientAddressLine1: record.recipientAddressLine1,
+        recipientAddressLine2: record.recipientAddressLine2,
+        recipientAddressLine3: record.recipientAddressLine3,
+        recipientCity: record.recipientCity,
+        recipientPostalCode: record.recipientPostalCode,
+        recipientCountryCode: record.recipientCountryCode,
+        totalPackageWeight: record.totalPackageWeight,
+        weightUnit: record.weightUnit,
+        totalPackageValue: record.totalPackageValue,
+        currencyType: record.currencyType,
+        productCode: record.productCode,
+        contentType: record.contentType,
+        packageContentDescription: record.packageContentDescription,
+        items: record.items,
+        shippingCost: record.shippingCost
+      },
+      auth: {
+        username: `${process.env.ASENDIA_USERNAME}`,
+        password: `${process.env.ASENDIA_PASSWORD}`,
+      },
+      params: {}
+    }
+
+    results.dataSent.push(dataObject);
     console.log(record);
 
     // Attempt to send each record to the Asendia API for processing
@@ -33,12 +80,12 @@ module.exports = async function (context) {
           'X-AsendiaOne-DataSource': `${process.env.ASENDIA_DATA_SOURCE}`
         },
         data: {
-          accountNumber: `${process.env.ASENDIA_ACCOUNT_NUMBER}`,
-          processingLocation: `${process.env.ASENDIA_PROCESSING_LOCATION}`,
+          accountNumber: record.accountNumber,
+          processingLocation: record.processingLocation,
           labelType: record.labelType,
           orderNumber: record.orderNumber,
           dispatchNumber: record.dispatchNumber,
-          packageID: record.PackageID,
+          packageID: record.packageID,
           returnFirstName: record.returnFirstName,
           returnLastName: record.returnLastName,
           returnAddressLine1: record.returnAddressLine1,
@@ -57,11 +104,8 @@ module.exports = async function (context) {
           recipientAddressLine2: record.recipientAddressLine2,
           recipientAddressLine3: record.recipientAddressLine3,
           recipientCity: record.recipientCity,
-          recipientProvince: record.recipientProvince,
           recipientPostalCode: record.recipientPostalCode,
           recipientCountryCode: record.recipientCountryCode,
-          recipientPhone: record.recipientPhone,
-          recipientEmail: record.recipientEmail,
           totalPackageWeight: record.totalPackageWeight,
           weightUnit: record.weightUnit,
           totalPackageValue: record.totalPackageValue,
@@ -75,15 +119,14 @@ module.exports = async function (context) {
         auth: {
           username: `${process.env.ASENDIA_USERNAME}`,
           password: `${process.env.ASENDIA_PASSWORD}`,
-        },
-        params: {}
+        }
       });
 
       const date = getDateTime();
 
       const recordResponse = {
         InstanceID: instanceId,
-        PackageID: record.PackageID,
+        PackageID: record.packageID,
         Response: JSON.stringify(response.data),
         Date: date,
       }
@@ -98,21 +141,21 @@ module.exports = async function (context) {
           addressTable,
           'processedDate',
           'PackageID',
-          [date, record.PackageID]
+          [date, record.packageID]
         );
 
         await database.updateRecord(
           itemTable,
           'processedDate',
           'PackageID',
-          [date, record.PackageID]
+          [date, record.packageID]
         );
         context.log(
-          `processRecords succeeded to update database for ${record.PackageID} of instance = '${instanceId}'.`
+          `processRecords succeeded to update database for ${record.packageID} of instance = '${instanceId}'.`
         );
       } catch (err) {
         context.log(
-          `processRecords failed to update database for ${record.PackageID} of instance = '${instanceId}'. ${err}`
+          `processRecords failed to update database for ${record.packageID} of instance = '${instanceId}'. ${err}`
         );
       }
 
@@ -122,7 +165,7 @@ module.exports = async function (context) {
       const date = getDateTime();
       const error = {
         InstanceId: instanceId,
-        PackageID: record.PackageID,
+        PackageID: record.packageID,
         Error: err.message,
         Trace: err.stack,
         Date: date,

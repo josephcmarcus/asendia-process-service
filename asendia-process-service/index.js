@@ -33,14 +33,19 @@ module.exports = df.orchestrator(function* (context) {
 
     activityPayload.responses = results.responses;
 
-    const responses = yield context.df.callActivity('writeResponses', activityPayload);
+    if (results.responses.length !== 0) {
+        const responses = yield context.df.callActivity('writeResponses', activityPayload);
+    };
 
     if (results.errors.length !== 0) {
         activityPayload.errors = results.errors;
         errors = yield context.df.callActivity('writeErrors', activityPayload);
-    }
+    };
     
-    outputs.push(formattedRecords, results, responses);
+    outputs.push(formattedRecords, results, errors);
+
+    // for testing only
+    // outputs.push(records, formattedRecords);
 
     return outputs;
 });
