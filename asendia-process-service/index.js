@@ -41,7 +41,7 @@ module.exports = df.orchestrator(function* (context) {
         activityPayload.errors = results.errors;
         errors = yield context.df.callActivity('writeErrors', activityPayload);
     };
-    
+
     outputs.push(formattedRecords, results, errors);
 
     // for testing only
