@@ -4,7 +4,7 @@ module.exports = async function (context) {
   const { responses, instanceId } = context.bindingData.args;
   const responseValues = [];
   const table = process.env.DB_RESPONSE_TABLE;
-  const columns = `InstanceID, PackageID, Response, Date`;
+  const columns = `InstanceID, PackageID, ResponseStatusCode, ResponseStatusMessage, Date`;
 
   for (response of responses) {
     responseValues.push(Object.values(response));

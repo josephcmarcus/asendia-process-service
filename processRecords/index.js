@@ -124,10 +124,16 @@ module.exports = async function (context) {
 
       const date = getDateTime();
 
+      console.log('*****')
+      console.log(response.data.responseStatus.responseStatusCode);
+      console.log(response.data.responseStatus.responseStatusMessage);
+      console.log('*****')
+
       const recordResponse = {
         InstanceID: instanceId,
         PackageID: record.packageID,
-        Response: JSON.stringify(response.data),
+        ResponseStatusCode: response.data.responseStatus.responseStatusCode,
+        ResponseStatusMessage: response.data.responseStatus.responseStatusMessage,
         Date: date,
       }
 
