@@ -17,21 +17,21 @@ const pool = mysql.createPool({
 
 const promisePool = pool.promise();
 
-// module.exports.getRecords = async function (table) {
-//   // returns an array of records matching the sql query, or an empty array if no records are found
-//   const [rows] = await promisePool.query(
-//     `SELECT * FROM ${table} where processedDate is null`
-//   );
-//   return rows;
-// };
-
 module.exports.getRecords = async function (table) {
-  // returns a single record matching the sql query for testing purposes
+  // returns an array of records matching the sql query, or an empty array if no records are found
   const [rows] = await promisePool.query(
-    `SELECT * FROM ${table} where PackageID = '11230668'`
+    `SELECT * FROM ${table} where processedDate is null`
   );
   return rows;
 };
+
+// module.exports.getRecords = async function (table) {
+//   // returns a single record matching the sql query for testing purposes
+//   const [rows] = await promisePool.query(
+//     `SELECT * FROM ${table} where PackageID = ''`
+//   );
+//   return rows;
+// };
 
 module.exports.updateRecord = async function (
   table,

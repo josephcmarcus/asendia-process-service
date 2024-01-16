@@ -4,7 +4,7 @@ module.exports = async function (context) {
   const { errors, instanceId } = context.bindingData.args;
   const errorValues = [];
   const table = process.env.DB_ERROR_TABLE;
-  const columns = `InstanceID, PackageID, Error, Trace, Date`;
+  const columns = `InstanceID, PackageID, ErrorStatusCode, ErrorStatusMessage, Date`;
 
   for (error of errors) {
     errorValues.push(Object.values(error));

@@ -124,11 +124,6 @@ module.exports = async function (context) {
 
       const date = getDateTime();
 
-      console.log('*****')
-      console.log(response.data.responseStatus.responseStatusCode);
-      console.log(response.data.responseStatus.responseStatusMessage);
-      console.log('*****')
-
       const recordResponse = {
         InstanceID: instanceId,
         PackageID: record.packageID,
@@ -168,12 +163,17 @@ module.exports = async function (context) {
       results.recordsProcessed++;
 
     } catch (err) {
+      console.log('*********')
+      console.log(`ErrorStatusCode: ${err.response.status}`)
+      console.log(`ErrorResponse: ${JSON.stringify(err.response.data)}`)
+      console.log('*********')
+
       const date = getDateTime();
       const error = {
         InstanceId: instanceId,
         PackageID: record.packageID,
-        Error: err.message,
-        Trace: err.stack,
+        ErrorStatusCode: err.response.status,
+        ErrorStatusMessage: JSON.stringify(err.response.data),
         Date: date,
       }
       results.errors.push(error);
