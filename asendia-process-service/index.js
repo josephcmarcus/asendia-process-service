@@ -7,7 +7,7 @@ module.exports = df.orchestrator(function* (context) {
         formattedRecords: [],
         errors: [],
         responses: []
-    }
+    };
 
     const outputs = [];
     let errors;
